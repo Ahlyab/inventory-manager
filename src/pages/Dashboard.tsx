@@ -3,6 +3,13 @@ import { Link } from "react-router-dom";
 import { Package, ShoppingCart, TrendingUp, AlertTriangle } from "lucide-react";
 import { fetchProducts, fetchSalesStats } from "../api";
 
+interface Product {
+  _id: string;
+  name: string;
+  stock: number;
+  price: number;
+}
+
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalProducts: 0,
@@ -24,7 +31,7 @@ const Dashboard = () => {
 
         const products = productsResponse.data;
         const lowStockItems = products.filter(
-          (product: any) => product.stock < 5
+          (product: Product) => product.stock < 5
         ).length;
 
         setStats({

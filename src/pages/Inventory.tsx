@@ -1,10 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Edit, Trash2, Search, ArrowUpDown } from "lucide-react";
 import { fetchProducts, deleteProduct } from "../api";
 
+interface Product {
+  _id: string;
+  name: string;
+  description?: string;
+  price: number;
+  cost: number;
+  stock: number;
+  category?: string;
+  sku?: string;
+}
+
 const Inventory = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,7 +44,7 @@ const Inventory = () => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await deleteProduct(id);
-        setProducts(products.filter((product: any) => product._id !== id));
+        setProducts(products.filter((product: Product) => product._id !== id));
       } catch (err) {
         console.error("Error deleting product:", err);
         setError("Failed to delete product");
@@ -50,14 +61,16 @@ const Inventory = () => {
     }
   };
 
-  const sortedProducts = [...products].sort((a: any, b: any) => {
-    if (a[sortField] < b[sortField]) return sortDirection === "asc" ? -1 : 1;
-    if (a[sortField] > b[sortField]) return sortDirection === "asc" ? 1 : -1;
+  const sortedProducts = [...products].sort((a: Product, b: Product) => {
+    const aValue = a[sortField as keyof Product] ?? "";
+    const bValue = b[sortField as keyof Product] ?? "";
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
     return 0;
   });
 
   const filteredProducts = sortedProducts.filter(
-    (product: any) =>
+    (product: Product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -185,7 +198,7 @@ const Inventory = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredProducts.length > 0 ? (
-                filteredProducts.map((product: any) => (
+                filteredProducts.map((product: Product) => (
                   <tr key={product._id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">

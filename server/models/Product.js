@@ -33,7 +33,6 @@ const productSchema = new mongoose.Schema({
   sku: {
     type: String,
     trim: true,
-    unique: true,
     required: false,
   },
   createdAt: {

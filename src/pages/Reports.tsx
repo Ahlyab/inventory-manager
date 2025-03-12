@@ -1,6 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { BarChart3, TrendingUp, Calendar } from "lucide-react";
-import { fetchSales, fetchProducts, fetchSalesStats } from "../api";
+import { fetchSales, fetchSalesStats } from "../api";
+
+interface SaleItem {
+  product: string;
+  name: string;
+  quantity: number;
+  total: number;
+}
+
+interface Sale {
+  _id: string;
+  items: SaleItem[];
+  total: number;
+  createdAt: string;
+}
+
+interface ProductSale {
+  id: string;
+  name: string;
+  quantity: number;
+  total: number;
+}
+
+interface DayRevenue {
+  date: string;
+  total: number;
+}
+
+interface ReportStats {
+  totalRevenue: number;
+  totalSales: number;
+  averageSale: number;
+  topProducts: ProductSale[];
+  revenueByDay: DayRevenue[];
+}
 
 const Reports = () => {
   const [loading, setLoading] = useState(true);
@@ -11,7 +45,7 @@ const Reports = () => {
       .split("T")[0],
     endDate: new Date().toISOString().split("T")[0],
   });
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<ReportStats>({
     totalRevenue: 0,
     totalSales: 0,
     averageSale: 0,
@@ -27,20 +61,16 @@ const Reports = () => {
     try {
       setLoading(true);
 
-      const [salesResponse, productsResponse, statsResponse] =
-        await Promise.all([
-          fetchSales(),
-          fetchProducts(),
-          fetchSalesStats(dateRange.startDate, dateRange.endDate),
-        ]);
+      const [salesResponse, statsResponse] = await Promise.all([
+        fetchSales(),
+        fetchSalesStats(dateRange.startDate, dateRange.endDate),
+      ]);
 
       const sales = salesResponse.data;
-      const products = productsResponse.data;
-
       console.log(sales);
 
       // Filter sales by date range
-      const filteredSales = sales.filter((sale: any) => {
+      const filteredSales = sales.filter((sale: Sale) => {
         const saleDate = new Date(sale.createdAt);
         const startDate = new Date(dateRange.startDate);
         const endDate = new Date(dateRange.endDate);
@@ -50,9 +80,9 @@ const Reports = () => {
       });
 
       // Calculate top products
-      const productSales: any = {};
-      filteredSales.forEach((sale: any) => {
-        sale.items.forEach((item: any) => {
+      const productSales: Record<string, ProductSale> = {};
+      filteredSales.forEach((sale: Sale) => {
+        sale.items.forEach((item: SaleItem) => {
           if (productSales[item.product]) {
             productSales[item.product].quantity += item.quantity;
             productSales[item.product].total += item.total;
@@ -68,12 +98,12 @@ const Reports = () => {
       });
 
       const topProducts = Object.values(productSales)
-        .sort((a: any, b: any) => b.total - a.total)
+        .sort((a: ProductSale, b: ProductSale) => b.total - a.total)
         .slice(0, 5);
 
       // Calculate revenue by day
-      const revenueByDay: any = {};
-      filteredSales.forEach((sale: any) => {
+      const revenueByDay: Record<string, number> = {};
+      filteredSales.forEach((sale: Sale) => {
         const date = new Date(sale.createdAt).toISOString().split("T")[0];
         if (revenueByDay[date]) {
           revenueByDay[date] += sale.total;
@@ -88,7 +118,7 @@ const Reports = () => {
           total,
         }))
         .sort(
-          (a: any, b: any) =>
+          (a: DayRevenue, b: DayRevenue) =>
             new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
@@ -221,9 +251,9 @@ const Reports = () => {
           {stats.revenueByDay.length > 0 ? (
             <div className="h-64">
               <div className="flex h-full items-end space-x-2">
-                {stats.revenueByDay.map((day: any, index: number) => {
+                {stats.revenueByDay.map((day: DayRevenue, index: number) => {
                   const maxRevenue = Math.max(
-                    ...stats.revenueByDay.map((d: any) => d.total)
+                    ...stats.revenueByDay.map((d: DayRevenue) => d.total)
                   );
                   const height = (day.total / maxRevenue) * 100;
                   console.log("----height", height);
@@ -279,19 +309,21 @@ const Reports = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {stats.topProducts.map((product: any, index: number) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {product.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                        {product.quantity}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                        Rs. {product.total.toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
+                  {stats.topProducts.map(
+                    (product: ProductSale, index: number) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {product.name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                          {product.quantity}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                          Rs. {product.total.toFixed(2)}
+                        </td>
+                      </tr>
+                    )
+                  )}
                 </tbody>
               </table>
             </div>

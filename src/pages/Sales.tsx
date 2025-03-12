@@ -3,8 +3,19 @@ import { Link } from "react-router-dom";
 import { Plus, Eye, Search, ArrowUpDown, Calendar } from "lucide-react";
 import { fetchSales } from "../api";
 
+interface Sale {
+  _id: string;
+  invoiceNumber: string;
+  customerName?: string;
+  customerContact?: string;
+  items: { product: string; quantity: number }[];
+  total: number;
+  paymentStatus: "paid" | "partial" | "pending";
+  createdAt: string;
+}
+
 const Sales = () => {
-  const [sales, setSales] = useState([]);
+  const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,7 +69,7 @@ const Sales = () => {
 
   // Apply sorting and filtering
   const filteredSales = [...sales]
-    .filter((sale: any) => {
+    .filter((sale: Sale) => {
       // Search filter
       const matchesSearch =
         sale.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -78,15 +89,37 @@ const Sales = () => {
 
       return matchesSearch && matchesDate;
     })
-    .sort((a: any, b: any) => {
+    .sort((a: Sale, b: Sale) => {
       if (sortField === "createdAt") {
         const dateA = new Date(a.createdAt).getTime();
         const dateB = new Date(b.createdAt).getTime();
         return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
       }
 
-      if (a[sortField] < b[sortField]) return sortDirection === "asc" ? -1 : 1;
-      if (a[sortField] > b[sortField]) return sortDirection === "asc" ? 1 : -1;
+      const aValue =
+        sortField === "customerName"
+          ? a.customerName || ""
+          : sortField === "invoiceNumber"
+          ? a.invoiceNumber
+          : sortField === "total"
+          ? a.total
+          : sortField === "paymentStatus"
+          ? a.paymentStatus
+          : "";
+
+      const bValue =
+        sortField === "customerName"
+          ? b.customerName || ""
+          : sortField === "invoiceNumber"
+          ? b.invoiceNumber
+          : sortField === "total"
+          ? b.total
+          : sortField === "paymentStatus"
+          ? b.paymentStatus
+          : "";
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
 
@@ -235,7 +268,7 @@ const Sales = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredSales.length > 0 ? (
-                filteredSales.map((sale: any) => (
+                filteredSales.map((sale: Sale) => (
                   <tr key={sale._id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">

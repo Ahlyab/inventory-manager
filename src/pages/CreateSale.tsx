@@ -3,15 +3,49 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, Trash2, ShoppingCart } from "lucide-react";
 import { fetchProducts, createSale } from "../api";
 
+interface Product {
+  _id: string;
+  name: string;
+  description?: string;
+  price: number;
+  cost: number;
+  stock: number;
+  category?: string;
+  sku?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface SaleItem {
+  product: string;
+  name: string;
+  price: number;
+  quantity: number;
+  total: number;
+}
+
+interface SaleData {
+  customerName: string;
+  customerContact: string;
+  items: SaleItem[];
+  subtotal: number;
+  tax: number;
+  discount: number;
+  total: number;
+  paymentMethod: "cash" | "card" | "upi" | "other";
+  paymentStatus: "paid" | "pending" | "partial";
+  notes: string;
+}
+
 const CreateSale = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [saleData, setSaleData] = useState({
+  const [saleData, setSaleData] = useState<SaleData>({
     customerName: "",
     customerContact: "",
     items: [],
@@ -55,10 +89,10 @@ const CreateSale = () => {
     setSaleData({ ...saleData, [name]: value });
   };
 
-  const handleAddItem = (product: any) => {
+  const handleAddItem = (product: Product) => {
     // Check if product already exists in the cart
     const existingItemIndex = saleData.items.findIndex(
-      (item: any) => item.product === product._id
+      (item: SaleItem) => item.product === product._id
     );
 
     if (existingItemIndex !== -1) {
@@ -72,7 +106,7 @@ const CreateSale = () => {
       setSaleData({ ...saleData, items: updatedItems });
     } else {
       // Add new item to cart
-      const newItem = {
+      const newItem: SaleItem = {
         product: product._id,
         name: product.name,
         price: product.price,
@@ -103,7 +137,7 @@ const CreateSale = () => {
 
   const calculateTotals = () => {
     const subtotal = saleData.items.reduce(
-      (sum: number, item: any) => sum + item.total,
+      (sum: number, item: SaleItem) => sum + item.total,
       0
     );
     const taxAmount = (subtotal * saleData.tax) / 100;
@@ -131,16 +165,16 @@ const CreateSale = () => {
 
       await createSale(saleData);
       navigate("/sales");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error creating sale:", err);
-      setError(err.response?.data?.message || "Failed to create sale");
+      setError(err instanceof Error ? err.message : "Failed to create sale");
     } finally {
       setSubmitting(false);
     }
   };
 
   const filteredProducts = products.filter(
-    (product: any) =>
+    (product: Product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -236,7 +270,7 @@ const CreateSale = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4 max-h-60 overflow-y-auto">
-              {filteredProducts.map((product: any) => (
+              {filteredProducts.map((product: Product) => (
                 <div
                   key={product._id}
                   className="border rounded-md p-3 cursor-pointer hover:bg-gray-50"
@@ -296,7 +330,7 @@ const CreateSale = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {saleData.items.map((item: any, index: number) => (
+                      {saleData.items.map((item: SaleItem, index: number) => (
                         <tr key={index}>
                           <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                             {item.name}

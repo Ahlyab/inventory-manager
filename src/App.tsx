@@ -1,14 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Dashboard from './pages/Dashboard';
-import Inventory from './pages/Inventory';
-import AddProduct from './pages/AddProduct';
-import EditProduct from './pages/EditProduct';
-import Sales from './pages/Sales';
-import CreateSale from './pages/CreateSale';
-import SaleDetails from './pages/SaleDetails';
-import Reports from './pages/Reports';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Dashboard from "./pages/Dashboard";
+import Inventory from "./pages/Inventory";
+import AddProduct from "./pages/AddProduct";
+import EditProduct from "./pages/EditProduct";
+import Sales from "./pages/Sales";
+import CreateSale from "./pages/CreateSale";
+import SaleDetails from "./pages/SaleDetails";
+import Reports from "./pages/Reports";
 
 function App() {
   return (
