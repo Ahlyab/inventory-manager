@@ -1,13 +1,37 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Printer } from "lucide-react";
 import { fetchSale } from "../api";
 import { useReactToPrint } from "react-to-print";
 
+interface SaleItem {
+  name: string;
+  price: number;
+  quantity: number;
+  total: number;
+  product: string;
+}
+
+interface Sale {
+  _id: string;
+  invoiceNumber: string;
+  customerName?: string;
+  customerContact?: string;
+  items: SaleItem[];
+  subtotal: number;
+  tax: number;
+  discount: number;
+  total: number;
+  paymentMethod: "cash" | "card" | "upi" | "other";
+  paymentStatus: "paid" | "pending" | "partial";
+  notes?: string;
+  createdAt: string;
+}
+
 const SaleDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [sale, setSale] = useState<any>(null);
+  const [sale, setSale] = useState<Sale | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const printRef = useRef<HTMLDivElement>(null);
@@ -100,9 +124,9 @@ const SaleDetails = () => {
                 <h3 className="font-bold text-gray-800">
                   AM COSMETICS AND PERFUME
                 </h3>
-                <p className="text-gray-600">123 Business Street</p>
-                <p className="text-gray-600">City, State 12345</p>
-                <p className="text-gray-600">Phone: (123) 456-7890</p>
+                <p className="text-gray-600">Shop # 82/E Resham Gali</p>
+                <p className="text-gray-600">Arifwala, Punjab, PK</p>
+                <p className="text-gray-600">Phone: 0303-3249998</p>
               </div>
             </div>
 
@@ -173,7 +197,7 @@ const SaleDetails = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {sale.items.map((item: any, index: number) => (
+                  {sale.items.map((item: SaleItem, index: number) => (
                     <tr key={index}>
                       <td className="py-3 px-4 text-gray-800">{item.name}</td>
                       <td className="py-3 px-4 text-gray-800 text-right">
