@@ -19,6 +19,9 @@ app.use(
 );
 
 // Routes
+app.get("/", (req, res) => {
+  res.send("Inventory and Revenue Management API is running");
+});
 app.use("/api/products", productRoutes);
 app.use("/api/sales", salesRoutes);
 
