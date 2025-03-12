@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Plus, Edit, Trash2, Search, ArrowUpDown } from "lucide-react";
 import { fetchProducts, deleteProduct } from "../api";
 
-interface Product {
+export interface Product {
   _id: string;
   name: string;
   description?: string;

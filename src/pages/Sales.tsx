@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Plus, Eye, Search, ArrowUpDown, Calendar } from "lucide-react";
 import { fetchSales } from "../api";
 
-interface Sale {
+export interface Sale {
   _id: string;
   invoiceNumber: string;
   customerName?: string;

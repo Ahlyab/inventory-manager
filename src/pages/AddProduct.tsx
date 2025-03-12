@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
 import { createProduct } from "../api";
 import { AxiosError } from "axios";
+import { Product } from "./CreateSale";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const AddProduct = () => {
         stock: parseInt(formData.stock) || 0,
       };
 
-      await createProduct(productData);
+      await createProduct(productData as Product);
       navigate("/inventory");
     } catch (err) {
       console.error("Error adding product:", err);

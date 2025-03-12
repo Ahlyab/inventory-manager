@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, Trash2, ShoppingCart } from "lucide-react";
 import { fetchProducts, createSale } from "../api";
 
-interface Product {
-  _id: string;
+export interface Product {
+  _id?: string;
   name: string;
   description?: string;
   price: number;
@@ -12,8 +12,8 @@ interface Product {
   stock: number;
   category?: string;
   sku?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface SaleItem {
@@ -24,7 +24,7 @@ interface SaleItem {
   total: number;
 }
 
-interface SaleData {
+export interface SaleData {
   customerName: string;
   customerContact: string;
   items: SaleItem[];
@@ -107,7 +107,7 @@ const CreateSale = () => {
     } else {
       // Add new item to cart
       const newItem: SaleItem = {
-        product: product._id,
+        product: product._id || "",
         name: product.name,
         price: product.price,
         quantity: 1,
