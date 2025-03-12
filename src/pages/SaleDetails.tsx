@@ -97,7 +97,9 @@ const SaleDetails = () => {
                 <p className="text-gray-600 mt-1">#{sale.invoiceNumber}</p>
               </div>
               <div className="mt-4 md:mt-0 text-right">
-                <h3 className="font-bold text-gray-800">Inventory Manager</h3>
+                <h3 className="font-bold text-gray-800">
+                  AM COSMETICS AND PERFUME
+                </h3>
                 <p className="text-gray-600">123 Business Street</p>
                 <p className="text-gray-600">City, State 12345</p>
                 <p className="text-gray-600">Phone: (123) 456-7890</p>
