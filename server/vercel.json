@@ -1,5 +1,5 @@
 {
-    "installCommand": "npm install -",
+    "installCommand": "npm install",
     "version": 2,
     "builds": [
         {
@@ -10,11 +10,11 @@
     "routes": [
         {
             "src": "/api/(.*)",
-            "dest": "./index.js"
+            "dest": "/index.js"
         },
         {
             "src": "/(.*)",
-            "dest": "./index.js"
+            "dest": "/index.js"
         }
     ]
 }
