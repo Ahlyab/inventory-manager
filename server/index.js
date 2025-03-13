@@ -12,16 +12,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: false,
-    exposedHeaders: ["Access-Control-Allow-Origin"],
-    maxAge: 86400, // 24 hours
-  })
-);
+app.use(cors({ origin: "*" }));
 // Routes
 app.get("/", (req, res) => {
   res.send("Inventory and Revenue Management API is running");
