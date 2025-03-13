@@ -17,10 +17,14 @@ app.use(
     origin: [
       "https://inventory-manager-ten-eta.vercel.app",
       "http://localhost:5173",
+      "https://inventory-manager-5djf.vercel.app",
     ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: false,
+    maxAge: 86400, // 24 hours
   })
 );
-
 // Routes
 app.get("/", (req, res) => {
   res.send("Inventory and Revenue Management API is running");
