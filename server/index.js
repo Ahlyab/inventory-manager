@@ -22,6 +22,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: false,
+    exposedHeaders: ["Access-Control-Allow-Origin"],
     maxAge: 86400, // 24 hours
   })
 );
