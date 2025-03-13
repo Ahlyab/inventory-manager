@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Product, SaleData } from '../pages/CreateSale';
 
-const API = axios.create({ baseURL: 'https://inventory-manager-topaz.vercel.app/api' });
+const API = axios.create({ baseURL: 'https://inventory-manager-5djf.vercel.app/api' });
 
 // Product API calls
 export const fetchProducts = () => API.get('/products');
