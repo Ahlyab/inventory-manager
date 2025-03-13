@@ -14,13 +14,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "https://inventory-manager-ten-eta.vercel.app",
-      "https://inventory-manager-5djf.vercel.app",
-    ],
-
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
+    origin: "*",
   })
 );
 
